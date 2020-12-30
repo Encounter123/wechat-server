@@ -1,7 +1,9 @@
 const request = require('request')
-const APPID = 'wx9ecdeff1bbdd701b'
-const APPSECRET = 'f78187ec420b8924f22f48d7f2810944'
+const rp = require('request-promise');
+// import { APPID, APPSECRET } from '../../config'
+const { APPID, APPSECRET } = require('../../config')
 let expires_in = 0
+
 
 function getAccess_token(){
 	let nowTime = +new Date()
