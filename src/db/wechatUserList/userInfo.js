@@ -3,7 +3,10 @@ const mysql = require('mysql2');
 const rp = require('request-promise');
 const UserList = require('./index')
 // import { APPID, APPSECRET } from '../../config'
-const { APPID, APPSECRET } = require('../../../config.js')
+const {
+  APPID,
+  APPSECRET
+} = require('../../../config.js')
 
 // var $conf = require('../config/config');
 // var $util = require('../util/util');
@@ -24,24 +27,70 @@ var jsonWrite = function (res, ret) {
   }
 };
 
-async function SaveUserInfo(req) {
+async function CreatUserInfo(req, resolve) {
   console.log(req)
-  let userList = await UserList.create({...req});
+  let userList = await UserList.create({
+    ...req
+  });
   await userList.increment('index');
   userList.reload();
+  resolve.send({
+    code: 200,
+    msg: 'success'
+  })
 }
 
+async function InsertUserInfo(req, resolve) {
+  UserList.update({ ...req }, {
+    where: {
+      UUID: req.token
+    }
+  }).then(res=>{
+    return UserList.findAll({
+      where: {
+        UUID: req.token
+      }
+    })
+  }).then(res=>{
+    resolve.send({
+      data:res[0],
+      code: 200,
+      msg: 'success'
+    })
+  })
+}
+
+
 module.exports = {
-  getOpenId: (req, res)=>{
+  getOpenId: (req, resolve) => {
     rp(`https://api.weixin.qq.com/sns/jscode2session?appid=${APPID}&secret=${APPSECRET}&js_code=${req.code}&grant_type=authorization_code`)
-      .then(res=>{
-        console.log(JSON.parse(res).openid)
-        SaveUserInfo({openid: JSON.parse(res).openid})
+      .then(res => {
+        // console.log('openid', JSON.parse(res).openid)
+        UserList.findAll({
+          where: {
+            openid: JSON.parse(res).openid
+          }
+        }).then(res1 => {
+          // console.log(res.length)
+          if (res1.length > 0) {
+            resolve.send({
+              data:res1[0],
+              code: 200,
+              msg: 'success'
+            })
+          } else {
+            CreatUserInfo({
+              openid: JSON.parse(res).openid
+            },resolve)
+          }
+        })
       })
-    
   },
-  saveUserInfo: async (req, res, next) => {
-    saveUserInfo()
+  saveUserInfo: async (req, resolve, next) => {
+    
+
+
+    InsertUserInfo({...req}, resolve)
     // pool.getConnection((err, connection) => {
     //   var param = req.body;
     //   connection.query($sql.goLogin, [param.username, param.password], function (err, result) {
@@ -49,9 +98,6 @@ module.exports = {
     //     connection.release();
     //   });
     // })
-
-    
-
   },
   // goLogin: function (req, res, next) {
   //   pool.getConnection(function (err, connection) {

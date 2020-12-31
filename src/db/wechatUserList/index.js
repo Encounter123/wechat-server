@@ -38,6 +38,7 @@ var UserList = init.define('userList', {
 	country: {type:DataTypes.STRING,defaultValue:''},
 	avatarUrl: {type:DataTypes.STRING,defaultValue:''},
 	openid: {type:DataTypes.STRING,defaultValue:''},
+	UUID: {type:DataTypes.UUID,defaultValue: Sequelize.UUIDV1 }
 }, {
 	timestamps: true, // 不要默认时间戳
 	freezeTableName: true
