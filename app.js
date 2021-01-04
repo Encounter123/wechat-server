@@ -22,11 +22,14 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 // app.use(access_token)
 // app.use(db)
+
+//所有的路由
 app.use(require('./src/routes/user.js'));
+app.use(require('./src/routes/sku.js'));
 
 // app.use(require('./src/api/customMsg.js'));							//监听微信客服推送
 
-require('./src/utils/timerShose.js')('64301')
+// require('./src/utils/timerShose.js')('64301')
 
 
 

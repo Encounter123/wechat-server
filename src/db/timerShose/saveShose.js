@@ -30,31 +30,29 @@ async function CreatTimerShose(req, resolve) {
   });
   await timerShose.increment('index');
   timerShose.reload();
-  // resolve.send({
-  //   code: 200,
-  //   msg: 'success'
-  // })
+  resolve.send({
+    code: 200,
+    msg: 'success'
+  })
 }
 
-async function InsertUserInfo(req, resolve) {
+async function InsertTimerShose(req, resolve) {
   TimerShose.update({
     ...req
   }, {
     where: {
-      UUID: req.token
+      spuId: req.spuId
     }
   }).then(res => {
-    return TimerShose.findAll({
-      where: {
-        UUID: req.token
-      }
-    })
-  }).then(res => {
     resolve.send({
-      data: res[0],
       code: 200,
       msg: 'success'
     })
+    // return TimerShose.findAll({
+    //   where: {
+    //     UUID: req.token
+    //   }
+    // })
   })
 }
 
@@ -68,8 +66,13 @@ module.exports = {
         spuId: req.spuId
       }
     }).then(res1 => {
-      CreatTimerShose(req, resolve)
+      if (res1.length > 0) {
+        InsertTimerShose(req, resolve)
+      } else {
+        CreatTimerShose(req, resolve)
+      }
     })
+
 
   },
 

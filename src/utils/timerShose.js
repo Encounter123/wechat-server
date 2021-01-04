@@ -1,7 +1,7 @@
 const rp = require('request-promise');
 const request = require("request");
 const crypto = require("crypto");
-const { saveShose }  = require("../db/timerShose/saveShose")
+const { saveShose } = require("../db/timerShose/saveShose");
 
 
 // 转换签名
@@ -11,7 +11,7 @@ function return_sign(raw_sign_code_str) {
   return password
 }
 
-
+// "64301"
 // 封装request请求
 function api_request(url, spuId) {
   return new Promise((resolve, reject) => {
@@ -44,9 +44,9 @@ function api_request(url, spuId) {
 
 
 
-function timerShose(spuId) {
+function timerShose(spuId, resolve) {
   let returnData = {}
-  api_request('https://app.poizon.com/api/v1/h5/index/fire/flow/product/detail', "64301").then(res => {
+  api_request('https://app.poizon.com/api/v1/h5/index/fire/flow/product/detail', spuId).then(res => {
     try {
       if (res.data.saleProperties.list.length > 0) {
         returnData = {
@@ -54,55 +54,51 @@ function timerShose(spuId) {
           skuId: res.data.detail.articleNumber,
           logo: res.data.detail.logoUrl,
           spuId: res.data.detail.spuId,
-          list: JSON.stringify(res.data.saleProperties.list)
+          list: res.data.saleProperties.list,
+          skus: res.data.skus
         }
-        return api_request('https://app.poizon.com/api/v1/h5/inventory/price/h5/queryBuyNowInfo', "64301")
+        return api_request('https://app.poizon.com/api/v1/h5/inventory/price/h5/queryBuyNowInfo', spuId)
       }
-    } catch (error) {}
-  }).then(res=>{
-    returnData.price = JSON.stringify(res.data.skuInfoList)
-    saveShose(returnData)
+    } catch (error) { }
+  }).then(res => {
+    if (res.data.skuInfoList.length > 0) {
+      let priceBox = res.data.skuInfoList.map(val => {
+        return {
+          skuId: val.skuId,
+          minPrice: val.minPrice
+        }
+      })
+      let arr = []
+      for (let i = 0; i < returnData.list.length; i++) {
+        for (let j = 0; j < returnData.skus.length; j++) {
+          if (returnData.skus[j].properties[0].propertyValueId === returnData.list[i].propertyValueId) {
+            arr.push({
+              propertyValueId: returnData.list[i].propertyValueId,
+              size: returnData.list[i].value,
+              skuId: returnData.skus[j].skuId
+            })
+            break
+          }
+        }
+      }
+
+      for (let i = 0; i < priceBox.length; i++) {
+        for (let j = 0; j < arr.length; j++) {
+          if (priceBox[i].skuId === arr[j].skuId) {
+            arr[j].minPrice = priceBox[i].minPrice
+            break
+          }
+        }
+      }
+
+      console.log(arr)
+      delete returnData.list
+      delete returnData.skus
+      returnData.price = JSON.stringify(arr)
+      saveShose(returnData, resolve)
+    }
   })
 }
 
 
-
-
-
-// let returnArr = []
-
-// function GetImgList(comic_id, chapter_newid) {
-//   return new Promise( (reslove, reject)=>{
-//     rp('https://www.manhuatai.com/api/getchapterinfo?product_id=2&productname=mht&platformname=pc&comic_id='+comic_id+'&chapter_newid='+chapter_newid).then(async (res)=>{
-//       let data = JSON.parse(res)
-//       let current_chapter = data.data.current_chapter
-//       let prev_chapter = data.data.prev_chapter
-//       let next_chapter = data.data.next_chapter
-
-//       let getUrl = 'http://mhpic.jumanhua.com'+current_chapter.rule+'-mht.middle.webp'
-//       returnArr = []
-//       // console.log(await recursiveArr(getUrl, 1))
-//       reslove(await recursiveArr(getUrl, 1))
-//     })
-//   })
-// }
-
-
-
-// function recursiveArr(Url, i){
-//   return new Promise((resolve, reject)=>{
-//     let tiems = i
-//     rp(encodeURI(Url.replace(/\$\$/g, tiems))).then(res=>{
-//       returnArr.push(Url.replace(/\$\$/g, tiems))
-//       tiems++
-//       recursiveArr(Url, tiems).then(res => resolve(res));
-//     }).catch(err=>{
-//       return resolve(returnArr);
-//     })
-//   })
-
-// }
-
-
 module.exports = timerShose
-// exports.timerShose = timerShose

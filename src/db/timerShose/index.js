@@ -13,8 +13,7 @@ var TimerShose = init.define('timerShose', {
 	skuId: {type:DataTypes.STRING,defaultValue:''},
 	logo: {type:DataTypes.STRING,defaultValue:''},
 	spuId: {type:DataTypes.STRING,defaultValue:''},
-	list: {type:DataTypes.STRING(5000),defaultValue:''},
-	price: {type:DataTypes.STRING(5000),defaultValue:''}
+	price: {type:DataTypes.TEXT('long')}
 }, {
 	timestamps: true, // 不要默认时间戳
 	freezeTableName: true
