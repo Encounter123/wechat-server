@@ -61,6 +61,7 @@ module.exports = {
   saveShose: (req, resolve) => {
 
     // console.log('openid', JSON.parse(res).openid)
+    
     TimerShose.findAll({
       where: {
         spuId: req.spuId
@@ -72,7 +73,6 @@ module.exports = {
         CreatTimerShose(req, resolve)
       }
     })
-
 
   },
 
