@@ -4,6 +4,7 @@ let {
   getOpenId,
   saveUserInfo
 } = require('../db/wechatUserList/userInfo');
+const { getShoseList } = require('../db/shoseList/getShoseList.js')
 
 
 // 查询全部
@@ -43,7 +44,8 @@ router.post('/getUserInfo', (req, res) => {
 
 // 获取列表
 router.post('/user/shoseList', (req, resolve) => {
-  console.log(req)
+  getShoseList(req.headers.token, resolve)
+  // console.log(req)
 })
 
 

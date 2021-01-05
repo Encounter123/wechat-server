@@ -24,16 +24,19 @@ app.use(bodyParser.json())
 // app.use(db)
 
 
-//登录拦截器
-app.use('*',(req,res,next)=>{
-	console.log(req.headers.token)
-	if (req.headers.token) {
-		next()
+//路由拦截器
+app.use('*', (req, res, next) => {
+	if (req.originalUrl != 'wxLogin') {
+		if (req.headers.token) {
+			next()
+		} else {
+			res.send({
+				code: 200,
+				msg: 'token已过期'
+			})
+		}
 	}else{
-		res.send({
-			code: 200,
-			msg: 'token已过期'
-		})
+		next()
 	}
 });
 //所有的路由
