@@ -4,8 +4,8 @@ let {
   getOpenId,
   saveUserInfo
 } = require('../db/wechatUserList/userInfo');
-const { getShoseList } = require('../db/shoseList/getShoseList.js')
-
+const { getShoseList, saveShoseList } = require('../db/shoseList/shoseList');
+const timerShose = require('../utils/timerShose.js')
 
 // 查询全部
 // router.get('/list', function(req, res, next) {
@@ -46,6 +46,11 @@ router.post('/getUserInfo', (req, res) => {
 router.post('/user/shoseList', (req, resolve) => {
   getShoseList(req.headers.token, resolve)
   // console.log(req)
+})
+
+// 保存用户的shose列表
+router.post('/user/saveShose',(req,resolve)=>{
+  timerShose(req.headers.token,req.body.spuId, resolve)
 })
 
 

@@ -17,7 +17,8 @@ var ShoseList = init.define('shoseList', {
   sizePrice: {type:DataTypes.STRING(5000),defaultValue:''}
 }, {
 	timestamps: true,
-	freezeTableName: true
+	freezeTableName: true,
+	paranoid: true
 });
 
 

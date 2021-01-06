@@ -2,6 +2,7 @@ const rp = require('request-promise');
 const request = require("request");
 const crypto = require("crypto");
 const { saveShose } = require("../db/timerShose/saveShose");
+const { saveShoseList } = require('../db/shoseList/shoseList');
 
 
 // 转换签名
@@ -44,7 +45,7 @@ function api_request(url, spuId) {
 
 
 
-function timerShose(spuId, resolve) {
+function timerShose(token, spuId, resolve) {
   let returnData = {}
   api_request('https://app.poizon.com/api/v1/h5/index/fire/flow/product/detail', spuId).then(res => {
     try {
@@ -95,7 +96,9 @@ function timerShose(spuId, resolve) {
       delete returnData.list
       delete returnData.skus
       returnData.price = JSON.stringify(arr)
-      saveShose(returnData, resolve)
+      saveShoseList(token, returnData, resolve)  //将数据存入用户表
+      saveShose(returnData, resolve)  //将数据存入定时器表
+      
     }
   })
 }
