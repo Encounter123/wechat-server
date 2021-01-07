@@ -96,9 +96,10 @@ function timerShose(token, spuId, resolve) {
       delete returnData.list
       delete returnData.skus
       returnData.price = JSON.stringify(arr)
-      saveShoseList(token, returnData, resolve)  //将数据存入用户表
+      if (token!='redis') {
+        saveShoseList(token, returnData, resolve)  //将数据存入用户表
+      }
       saveShose(returnData, resolve)  //将数据存入定时器表
-      
     }
   })
 }

@@ -30,10 +30,10 @@ async function CreatTimerShose(req, resolve) {
   });
   await timerShose.increment('index');
   timerShose.reload();
-  resolve.send({
-    code: 200,
-    msg: 'success'
-  })
+  // resolve.send({
+  //   code: 200,
+  //   msg: 'success'
+  // })
 }
 
 async function InsertTimerShose(req, resolve) {
@@ -44,10 +44,10 @@ async function InsertTimerShose(req, resolve) {
       spuId: req.spuId
     }
   }).then(res => {
-    resolve.send({
-      code: 200,
-      msg: 'success'
-    })
+    // resolve.send({
+    //   code: 200,
+    //   msg: 'success'
+    // })
     // return TimerShose.findAll({
     //   where: {
     //     UUID: req.token

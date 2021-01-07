@@ -1,11 +1,9 @@
 let express = require('express');
 let router = express.Router();
-let {
-  getOpenId,
-  saveUserInfo
-} = require('../db/wechatUserList/userInfo');
+let { getOpenId, saveUserInfo } = require('../db/wechatUserList/userInfo');
 const { getShoseList, saveShoseList } = require('../db/shoseList/shoseList');
-const timerShose = require('../utils/timerShose.js')
+const timerShose = require('../utils/timerShose.js');
+const { redisSaveShose }  = require('../redis/list');
 
 // 查询全部
 // router.get('/list', function(req, res, next) {
@@ -48,9 +46,11 @@ router.post('/user/shoseList', (req, resolve) => {
   // console.log(req)
 })
 
+
 // 保存用户的shose列表
 router.post('/user/saveShose',(req,resolve)=>{
   timerShose(req.headers.token,req.body.spuId, resolve)
+  redisSaveShose(req.body.spuId) // 存入缓存
 })
 
 

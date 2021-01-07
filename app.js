@@ -1,7 +1,6 @@
 const express = require('express');
 const fs = require("fs");
 const bodyParser = require('body-parser');
-const schedule = require('node-schedule');
 // const router = express.Router();
 const app = express();
 const http = require("http");
@@ -22,6 +21,9 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 // app.use(access_token)
 // app.use(db)
+
+
+require('./src/redis/list') 		//获取redis
 
 
 //路由拦截器
@@ -64,14 +66,6 @@ app.use('/static', express.static(__dirname + '/static')); //托管静态文件
 
 
 
-const scheduleCronstyle = () => {
-	//每分钟的第30秒定时执行一次:
-	schedule.scheduleJob('30 * * * * *', () => {
-		console.log('scheduleCronstyle:' + new Date());
-	});
-}
-
-scheduleCronstyle();
 
 
 
