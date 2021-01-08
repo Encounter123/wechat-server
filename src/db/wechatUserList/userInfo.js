@@ -36,19 +36,20 @@ async function CreatUserInfo(req, resolve) {
   userList.reload();
   resolve.send({
     code: 200,
-    msg: 'success'
+    msg: 'success',
+    data: req
   })
 }
 
 async function InsertUserInfo(req, resolve) {
   UserList.update({ ...req }, {
     where: {
-      UUID: req.token
+      openId: req.token
     }
   }).then(res=>{
     return UserList.findAll({
       where: {
-        UUID: req.token
+        openId: req.token
       }
     })
   }).then(res=>{

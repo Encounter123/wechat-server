@@ -28,7 +28,8 @@ require('./src/redis/list') 		//获取redis
 
 //路由拦截器
 app.use('*', (req, res, next) => {
-	if (req.originalUrl != 'wxLogin') {
+	console.log(req.originalUrl)
+	if (req.originalUrl != '/getOpenId') {
 		if (req.headers.token) {
 			next()
 		} else {

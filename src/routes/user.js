@@ -25,18 +25,11 @@ router.post('/getOpenId', (req, res) => {
 
 router.post('/getUserInfo', (req, res) => {
   // saveUserInfo(req.body, res)
-  console.log()
-  if (req.headers.token) {
-    saveUserInfo({
-      token: req.headers.token,
-      ...req.body
-    }, res)
-  } else {
-    res.send({
-      code: 200,
-      msg: 'token已过期'
-    })
-  }
+  saveUserInfo({
+    token: req.headers.token,
+    ...req.body
+  }, res)
+  
 })
 
 
