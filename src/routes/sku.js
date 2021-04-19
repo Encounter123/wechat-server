@@ -11,6 +11,16 @@ router.post('/sku/saveSku',(req, resolve)=>{
 
 
 
+router.post('/xcx/wx-msg/send',(req, resolve)=>{
+  console.log('1')
+	console.log('1',req)
+  console.log('2',req.body)
+	console.log('3',req)
+  // timerShose(req.headers.token,req.body.spuId, resolve)
+})
+
+
+
 
 
 module.exports = router
